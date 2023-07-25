@@ -4,6 +4,7 @@ import click
 import logging
 import sys
 
+# Basic logging sends all information to the terminal or stdout.
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S',
                     level=logging.INFO)
 
@@ -16,16 +17,15 @@ def main(excel_file):
     TreeMap was delevoped by Oliver Powell on 25/07/23. For more info please contact: treemap@oliverpowell.com 
     """
     logging.info("Loading data...")
-    df = pd.read_excel(excel_file)
+    df = pd.read_excel(excel_file) # Load excel data into dataframe
 
     logging.info("Analysing data...")
-    df['Average Score'] = round(df.groupby('Tree')['Score (0-10)'].transform('mean'))
-    Se = pd.DataFrame(df.groupby('Tree')['Score (0-10)'].agg(list))
+    df['Average Score'] = round(df.groupby('Tree')['Score (0-10)'].transform('mean')) # Calculate mean score for coppices
+    Se = pd.DataFrame(df.groupby('Tree')['Score (0-10)'].agg(list)) # Generate list of all values for all trees/coppices
     Se.columns = ['Score List']
-    df = pd.merge(df, Se, on="Tree")
-    colour_scale = []
+    df = pd.merge(df, Se, on="Tree") # generate final dataframe with all values
 
-
+    # Generate the tree map
     logging.info("Plotting trees...")
     fig = px.scatter_mapbox(df, 
                             lat="North", 
